@@ -1,0 +1,78 @@
+,manhattan,cosine,euclidean,author
+"Kafka,-Franz_Der Prozess.txt",0.0,0.0,0.0,Kafka
+"Kafka,-Franz_Amerika.txt",1252.18,0.42,44.45,Kafka
+"Kafka,-Franz_Das Schloss.txt",1299.67,0.44,46.27,Kafka
+"Wassermann,-Jakob_Christian Wahnschaffe.txt",1781.2,0.89,56.86,Wassermann
+"Gutzkow,-Karl_Die Ritter vom Geiste.txt",1783.63,0.98,55.97,Gutzkow
+"Spielhagen,-Friedrich_Hammer und Ambo+í.txt",1791.57,0.93,57.13,Spielhagen
+"Keller,-Gottfried_Martin Salander.txt",1844.34,0.89,60.27,Keller
+"Keller,-Gottfried_Das Sinngedicht.txt",1867.52,0.93,59.1,Keller
+"Spielhagen,-Friedrich_Problematische Naturen - Erste Abtheilung.txt",1867.96,1.0,59.39,Spielhagen
+"Gutzkow,-Karl_Der Zauberer von Rom.txt",1888.39,1.02,59.88,Gutzkow
+"Freytag,-Gustav_Soll und Haben.txt",1902.1,0.92,60.56,Freytag
+"Spielhagen,-Friedrich_Zum Zeitvertreib.txt",1933.01,0.89,62.63,Spielhagen
+"Wassermann,-Jakob_Das Gaensemaennchen.txt",1933.4,0.97,62.23,Wassermann
+"Fontane,-Theodor_Der Stechlin.txt",1962.52,0.89,63.73,Fontane
+"May,-Karl_Im Reiche des silbernen Loewen I.txt",1966.69,0.84,63.83,May
+"Fontane,-Theodor_Effi Briest.txt",1974.44,0.89,63.91,Fontane
+"Freytag,-Gustav_Die verlorene Handschrift.txt",1981.47,0.98,62.58,Freytag
+"Keller,-Gottfried_Der gruene Heinrich [Erste Fassung].txt",1988.4,1.06,63.06,Keller
+"Hauff,-Wilhelm_Mitteilungen aus den Memoiren des Satan.txt",1992.8,1.01,63.56,Hauff
+"Ebner-Eschenbach,-Marie-von_Das Gemeindekind.txt",2015.75,0.94,65.36,Ebner-Eschenbach
+"Fouque,-Caroline-de-la-Motte_Resignation.txt",2028.49,1.01,62.69,Fouque
+"May,-Karl_Kurdistan.txt",2028.64,0.89,67.34,May
+"Marlitt,-Eugenie_Goldelse.txt",2033.33,0.97,64.44,Marlitt
+"Dohm,-Hedwig_Sibilla Dalmar.txt",2041.88,1.05,64.25,Dohm
+"Francois,-Louise-von_Stufenjahre eines Gluecklichen.txt",2046.62,1.09,65.15,Francois
+"Ebner-Eschenbach,-Marie-von_Bozena.txt",2049.21,1.01,64.74,Ebner-Eschenbach
+"Marlitt,-Eugenie_Die Frau mit den Karfunkelsteinen.txt",2051.87,0.97,65.98,Marlitt
+"DE_1886_Fontane,Theodor_Cecile_Novel.txt",2057.82,0.96,66.54,DE_1886_Fontane
+"Ebner-Eschenbach,-Marie-von_Unsuehnbar.txt",2060.17,1.01,64.39,Ebner-Eschenbach
+"Hahn-Hahn,-Ida-Graefin-von_Maria Regina.txt",2061.99,1.1,66.7,Hahn-Hahn
+"Dohm,-Hedwig_Christa Ruland.txt",2065.97,1.04,65.47,Dohm
+"May,-Karl_Old Surehand I.txt",2068.69,0.86,70.42,May
+"Goethe,-Johann-Wolfgang_Wilhelm Meisters Lehrjahre.txt",2084.46,1.04,65.52,Goethe
+"Hahn-Hahn,-Ida-Graefin-von_Graefin Faustine.txt",2102.33,1.08,65.51,Hahn-Hahn
+UNBEKANNT.txt,2103.82,0.97,67.28,UNBEKANNT.txt
+"Dohm,-Hedwig_Schicksale einer Seele.txt",2110.93,1.07,66.06,Dohm
+"Hauff,-Wilhelm_Lichtenstein.txt",2116.2,1.06,68.61,Hauff
+"Goethe,-Johann-Wolfgang_Die Wahlverwandtschaften.txt",2121.49,0.99,67.62,Goethe
+"Schopenhauer,-Johanna_Richard Wood.txt",2126.1,1.04,66.64,Schopenhauer
+"Fontane,-Theodor_Irrungen Wirrungen.txt",2126.14,0.96,69.58,Fontane
+"Raabe,-Wilhelm_Stopfkuchen Eine See- und Mordgeschichte.txt",2132.41,0.97,69.39,Raabe
+"Arnim,-Ludwig-Achim-von_Kronenwaechter 1.txt",2133.01,1.05,67.51,Arnim
+"Francois,-Louise-von_Die letzte Reckenburgerin.txt",2135.0,1.11,67.59,Francois
+"Arnim,-Ludwig-Achim-von_Armut Reichtum Schuld und Busse der Graefin Dolores.txt",2138.35,1.12,66.33,Arnim
+"Wassermann,-Jakob_Die Juden von Zirndorf.txt",2151.84,1.0,68.74,Wassermann
+Jean-Paul_Flegeljahre.txt,2158.14,1.07,67.37,Jean-Paul_Flegeljahre.txt
+"Marlitt,-Eugenie_Das Geheimnis der alten Mamsell.txt",2161.23,1.02,68.35,Marlitt
+"Tieck,-Ludwig_Vittoria Accorombona.txt",2165.91,1.09,67.05,Tieck
+"Raabe,-Wilhelm_Im alten Eisen.txt",2169.44,0.98,70.0,Raabe
+"Lewald,-Fanny_Eine Lebensfrage.txt",2197.96,1.07,69.18,Lewald
+"Arnim,-Ludwig-Achim-von_Isabella von Aegypten.txt",2201.88,1.05,70.2,Arnim
+"Lewald,-Fanny_Jenny.txt",2206.64,1.07,68.83,Lewald
+"Gutzkow,-Karl_Wally die Zweiflerin.txt",2210.23,1.06,70.99,Gutzkow
+"Freytag,-Gustav_Die Ahnen.txt",2227.66,1.06,70.89,Freytag
+Jean-Paul_Hesperus oder 45 Hundsposttage.txt,2240.68,1.14,69.9,Jean-Paul_Hesperus oder 45 Hundsposttage.txt
+"Wieland,-Christoph-Martin_Die Abenteuer des Don Sylvio von Rosalva.txt",2256.51,1.04,71.36,Wieland
+"Hahn-Hahn,-Ida-Graefin-von_Sibylle.txt",2263.93,1.19,69.58,Hahn-Hahn
+"Raabe,-Wilhelm_Das Odfeld.txt",2267.02,1.04,74.01,Raabe
+"Schopenhauer,-Johanna_Die Tante.txt",2271.36,1.14,69.05,Schopenhauer
+"Wieland,-Christoph-Martin_Aristipp und einige seiner Zeitgenossen.txt",2281.92,1.03,71.03,Wieland
+Jean-Paul_Titan.txt,2294.65,1.19,71.38,Jean-Paul_Titan.txt
+"Huber,-Therese_Ellen Percy.txt",2295.05,1.06,71.12,Huber
+"Tieck,-Ludwig_Franz Sternbalds Wanderungen.txt",2327.98,1.12,73.48,Tieck
+"Tieck,-Ludwig_Geschichte des Herrn William Lovell.txt",2332.04,1.14,72.57,Tieck
+"Hauff,-Wilhelm_Die Bettlerin vom Pont des Arts.txt",2341.75,1.06,73.88,Hauff
+"Schopenhauer,-Johanna_Gabriele.txt",2349.45,1.14,71.73,Schopenhauer
+"Fouque,-Caroline-de-la-Motte_Die Frau des Falkensteins.txt",2357.67,1.09,72.45,Fouque
+"Francois,-Louise-von_Judith die Kluswirtin.txt",2391.42,1.1,75.71,Francois
+"Goethe,-Johann-Wolfgang_Die Leiden des jungen Werther.txt",2409.03,1.16,74.88,Goethe
+"Fischer,-Caroline-Auguste_Margarethe.txt",2425.89,1.02,76.36,Fischer
+"Fouque,-Caroline-de-la-Motte_Magie der Natur.txt",2433.53,1.07,76.16,Fouque
+"Huber,-Therese_Die Familie Seldorf.txt",2479.77,1.19,77.08,Huber
+"Wieland,-Christoph-Martin_Geschichte des Agathon.txt",2499.95,1.08,80.29,Wieland
+"Fischer,-Caroline-Auguste_Die Honigmonathe.txt",2503.31,1.05,78.92,Fischer
+"Lewald,-Fanny_Clementine.txt",2542.8,1.13,79.99,Lewald
+"Fischer,-Caroline-Auguste_Gustavs Verirrungen.txt",2576.86,1.05,80.64,Fischer
+"Huber,-Therese_Luise.txt",2647.38,1.09,85.23,Huber

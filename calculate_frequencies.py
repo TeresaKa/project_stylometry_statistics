@@ -74,5 +74,6 @@ def create_dataframe(series, mfw):
 
 freq, zscores = create_dataframe(series, 2000)
 print(zscores.head())
+print(freq)
 
 zscores.to_hdf('corpusDE.h5', key='data', mode='w')
