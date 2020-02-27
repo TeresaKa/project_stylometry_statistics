@@ -1,8 +1,5 @@
 import pandas as pd
 from scipy.spatial import distance
-import glob
-import matplotlib.pyplot as plt
-import numpy as np
 
 zscores = pd.read_hdf('corpusDE.h5')
 
@@ -12,11 +9,8 @@ def calculate_distance(df, unknown):
     series = []
     for index, row in df.iterrows():
         manhattan = distance.cityblock(row, df.loc[unknown])
-       # plt.plot(i, manhattan, "r.")
         cosine = distance.cosine(row, df.loc[unknown])
-        #plt.plot(i, cosine, "b.")
         euclidean = distance.euclidean(row, df.loc[unknown])
-        #plt.plot(i, euclidean, "g.")
         series.append(pd.Series([manhattan, cosine, euclidean, '?'], ['manhattan', 'cosine', 'euclidean', 'label'], name=index))
     return series
 

@@ -27,8 +27,6 @@ def word2freq(counts):
     for c in counts:
         words.append(c)
         freq.append(counts[c])
-    #words.append('Total_per_text')
-    #freq.append(sum(freq))
     return words, freq
 
 
@@ -67,7 +65,6 @@ def create_dataframe(series, mfw):
     zscores = df.apply(zscore)
 
     # häufigste Wörter evtl erst nach zscore Berechnung abeschneiden (andere Mittelwerte/ Standardabweichungen)
-    # bei großen Matrizen evtl .sum, .mean etc. schneller als .apply!
 
     return df, zscores
 
