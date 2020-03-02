@@ -60,9 +60,9 @@ def create_dataframe(series, mfw):
     df = df.sort_values(by='Total_per_word', axis=1, ascending=False)
     df.drop('Total_per_word', inplace=True, axis=0)
 
-    df.drop(df.columns[mfw:], inplace=True, axis=1)
-
     zscores = df.apply(zscore)
+
+    zscores.drop(zscores.columns[mfw:], inplace=True, axis=1)
 
     # häufigste Wörter evtl erst nach zscore Berechnung abeschneiden (andere Mittelwerte/ Standardabweichungen)
 
