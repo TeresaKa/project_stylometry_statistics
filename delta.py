@@ -43,4 +43,6 @@ for u in zscores.index:
 print(attribution.to_string())
 
 attribution.to_csv('DE_attribution')
+#pro mfw Berechnung
+
 #d.to_csv(d.name + '.csv')
