@@ -69,9 +69,8 @@ def create_dataframe(series, mfw):
     return df, zscores
 
 mfw_values = [10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
-
-freq, zscores = create_dataframe(series, 2000)
-print(zscores.head())
-print(freq)
-
-zscores.to_hdf('corpusDE.h5', key='data', mode='w')
+for mfw in mfw_values:
+    freq, zscores = create_dataframe(series, mfw)
+    # print(zscores.head())
+    # print(freq)
+    zscores.to_hdf(str(mfw) + '_zscore_corpusDE.h5', key='data', mode='w')

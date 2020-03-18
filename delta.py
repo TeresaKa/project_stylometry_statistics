@@ -1,7 +1,7 @@
 import pandas as pd
 from scipy.spatial import distance
 
-zscores = pd.read_hdf('corpusDE.h5')
+zscores = pd.read_hdf('2000_zscore_corpusDE.h5')
 
 # normale Distanz/ zscores voneinander abziehen
 
