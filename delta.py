@@ -1,7 +1,8 @@
 import pandas as pd
+import glob
 from scipy.spatial import distance
 
-zscores = pd.read_hdf('2000_zscore_corpusDE.h5')
+#zscores = pd.read_hdf('2000_zscore_corpusDE.h5')
 
 # normale Distanz/ zscores voneinander abziehen
 
@@ -36,13 +37,20 @@ def assign_labels(df, u):
             d.loc[i,'label'] = 'different'
     return d
 
+# hier ein loop mit pfad, der für alle mfw Werte die zscore Dateien einliest (alle .h5 Endungen?)
+path = 'results/piperDE/zscores/*.h5'
+prefix = 'results/piperDE/zscores/'
+corpus = 'piperDE'
+for file in glob.glob(path):
+    filename = file.replace(prefix, '')
+    mfw = filename.split('_')[0]
 
-attribution = pd.DataFrame()
-for u in zscores.index:
-    attribution = pd.concat([attribution, assign_labels(zscores, u)])
-print(attribution.to_string())
+    zscores = pd.read_hdf(file)
+    attribution = pd.DataFrame()
+    for u in zscores.index:
+        attribution = pd.concat([attribution, assign_labels(zscores, u)])
 
-attribution.to_csv('DE_attribution')
-#pro mfw Berechnung
+    attribution.to_csv(str(mfw) + '_delta_' + str(corpus) + '.h5')
+
 
 #d.to_csv(d.name + '.csv')
