@@ -5,6 +5,6 @@
     .
     ├── dataset # Contains the datasets in different languages
     ├── results # Contains the code for the various tested classifiers
-    ├── scripts # Contains various Jupyter Notebooks for exploring and transforming the dataset
-    ├── Scripts # Contains scripts to transform the dataset and process the data
+    ├── scripts # Contains scripts to transform the dataset and process the data
+    ├── notebooks # Contains Jupyter Notebooks to viszualize datasets and results
     └── README.md
