@@ -6,8 +6,8 @@ In authorship attribution, the calculation of delta values, e.g. Burrow's Delta,
 ### Structure
 
     .
-    ├── dataset # Contains the datasets in different languages
-    ├── results # Contains the code for the various tested classifiers
+    ├── dataset # Contains datasets in different languages
+    ├── results # Contains the results for zscore, delta and error calculations.
     ├── scripts # Contains scripts to transform the dataset and process the data
     ├── notebooks # Contains Jupyter Notebooks to viszualize datasets and results
     └── README.md
