@@ -1,4 +1,7 @@
-# project_stylometry_statistics
+# Stylometry and statistics
+
+In authorship attribution, the calculation of delta values, e.g. Burrow's Delta, is a commonly used method. This project is an attempt to determine a certain value of delta to assign authorship as precisely as possible that can be applied across different corpora.
+
 
 ### Structure
 
