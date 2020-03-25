@@ -33,6 +33,11 @@ def wordcounts_in_file(f_name):
 
 
 def word2freq(counts):
+    """
+
+    :param counts: a Counter from a file to be analyzed
+    :return: list of each words and their frequencies
+    """
     words = []
     freq = []
     for c in counts:
@@ -42,6 +47,12 @@ def word2freq(counts):
 
 
 def create_pd_series(path, prefix):
+    """
+
+    :param path: path to files
+    :param prefix: prefix to remove from filename for further use in dataframe
+    :return: pd.Series with words and wordcounts
+    """
     series = []
     for file in glob.glob(path):
         filename = file.replace(prefix, '')
@@ -59,6 +70,12 @@ series = create_pd_series(path, prefix)
 
 
 def create_dataframe(series, mfw):
+    """
+
+    :param series: pd.Series, created e.g. with create_pd_series()
+    :param mfw: value of most frequent words
+    :return: pd.Dataframe with zscores
+    """
     df = pd.DataFrame(series)
 
     df = df.fillna(0)
