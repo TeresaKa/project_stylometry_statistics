@@ -21,8 +21,14 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import glob
 
+
 class AuthorshipAttribution:
     def __init__(self, file):
+        """
+        Prepare data calculated in 'delta.py' for further use. Assign authorship using Cosine Delta values.
+        Sets decision boundaries in 1%-steps added to minimum delta value.
+        :param file: pd.Dataframe with Delta values
+        """
         self.file = file
 # ### load calculated delta measures
 
@@ -41,11 +47,11 @@ class AuthorshipAttribution:
     def delta_prediction(self):
         base = self.reshape_dataframe()
         #was passiert hier:
-        cosine = base['cosine'].values.reshape(-1, 1)  #np.unique machen?in Schleife unten werden trotzdem alle Zeilen erfasst damit
+        cosine = base['cosine'].values.reshape(-1, 1)
         minx = min(cosine)
         cos = np.unique(cosine)
 
-        # ### determine same and different authors in 1%-steps of cosine values
+        # determine same and different authors in 1%-steps of cosine values
         cos_range = max(cos)-min(cos)
         perc = np.arange(0.01, 1.01, 0.01)
 
@@ -59,87 +65,98 @@ class AuthorshipAttribution:
 
 
 class ErrorCalculation:
-    def __init__(self, predictions, cos):
+    def __init__(self, predictions, cos, mfw):
+        """
+        Calculates true positive, true negative, false positive and false negative values.
+        :param predictions: Predicted authorship attributions as pd.Dataframe
+        :param cos: List of unique Cosinus Delta values in 'predictions'
+        """
         self.predictions = predictions   # use delta_prediction
         self.cos = cos
         self.min_cos = min(self.cos)
         self.max_cos = max(self.cos)
+        self.mfw = mfw
 # ### calculate and visualize alpha and beta errors
 
-    def normalized_cnf_matrix(self, cls, column, cols, true_label):
-       # plt.ioff()   #disable displaying plots
-
+    def calculate_normalized_cnf_matrix(self, true_label, cols):
+        """ Create Confusion Matrix and extract true negative, true positive, false negative, false positive values """
         cnf = confusion_matrix(true_label, cols, normalize='all')
-        fig, ax = plt.subplots(figsize=(5,5))
-        #plt.figure(figsize=(5,5))
-        sns.heatmap(cnf, annot=True, cmap=sns.color_palette("Blues"), ax = ax)
-
-
+        print(cnf)
         tn, fp, fn, tp = cnf.ravel()
 
-        error_dic = {'tn':tn, 'fp':fp, 'fn':fn, 'tp':tp}
+        error_dic = {'tn': tn, 'fp': fp, 'fn': fn, 'tp': tp}
+
+        return cnf, error_dic
+
+    def visualize_cnf_matrix(self, cnf, cls, percentage):
+        fig, ax = plt.subplots(figsize=(5,5))
+        sns.heatmap(cnf, annot=True, cmap=sns.color_palette("Blues"), ax = ax)
+
         ax.set_xlabel('Predicted labels')
         ax.set_ylabel('True labels')
         ax.set_title('Confusion Matrix')
         ax.xaxis.set_ticklabels(cls)
         ax.yaxis.set_ticklabels(cls)
 
-        plt.savefig(str(mfw) + '_' + str(column) + '_' + str(corpus) + '.png')
+        plt.savefig(str(self.mfw) + '_' + str(percentage) + '_' + str(corpus) + '.png')
         plt.close(fig)
         #plt.show()
 
-        return error_dic
+        return ...  # ???
 
-    def calculate_errors(self):
+    def extract_errors(self):
+        """ Create pd.Dataframe with true negative, true positive, false negative, false positive values
+        for every percentage-step for decision boundary """
         true_label = np.array(self.predictions.label)
         self.predictions.drop('cosine', inplace=True, axis=1)
         self.predictions.drop('label', inplace=True, axis=1)
         cls = ['same', 'different']
         error_list = []
-        # error_dic = {}
         for i, column in enumerate(self.predictions):
             print(column)
             col_list = np.array(self.predictions[column])
-            error_dic = self.normalized_cnf_matrix(cls, column, col_list, true_label) #ACHTUNG!alles irgendwie schöner machen, in eine Schleife
+            cnf, error_dic = self.calculate_normalized_cnf_matrix(col_list, true_label) #ACHTUNG!alles irgendwie schöner machen, in eine Schleife
             error_dic['percentage'] = column
             error_list.append(error_dic)
+            #self.visualize_cnf_matrix(cnf, cls, column) # uncomment if confusion matrices for every percentage step are wanted
+
 
         errors = pd.DataFrame(error_list)
         errors.name = ('min: {}, max: {}'.format(self.min_cos, self.max_cos))
 
-        errors.to_csv('errors_' + str(corpus))
+        errors.to_csv('errors_' + str(self.mfw) + '_' + str(corpus))
         return errors
 
-
     def extract_alpha_beta_errors(self):
-        errors = self.calculate_errors().copy()
+        errors = self.extract_errors(self.mfw).copy()
         errors.drop('tn', inplace=True, axis=1)
         errors.drop('tp', inplace=True, axis=1)
         # errors2.drop('percentage', inplace=True, axis=1)
 
         return errors
 
-
-    def visualise_errors(self):
-        data = self.extract_alpha_beta_errors().melt('percentage', var_name='errors', value_name='vals')
+    def visualise_alpha_beta_errors(self):
+        data = self.extract_alpha_beta_errors(self.mfw).melt('percentage', var_name='errors', value_name='vals')
         g = sns.lineplot(x="percentage", y="vals", hue='errors', data=data)
         plt.savefig('error_' + str(corpus) + '.png')
         plt.show()
         return g
 
     def alpha_beta_intersection(self):
-        #berechne Schnittpunkt zwischen alpha und beta fehler
-        errors = self.extract_alpha_beta_errors()
-        # lower_margin = errors.query('fp <= fn').iloc[-1].name
-        # upper_margin = errors.query('fn <= fp').iloc[0].name
+        """ Find intersection point of alpha (false positive) and beta (false negative) error. """
+        errors = self.extract_alpha_beta_errors(self.mfw)
         lower_margin = errors.query('fp <= fn').iloc[-1].percentage
+        fp_low = errors.query('fp <= fn').iloc[-1].fp
+        fn_low = errors.query('fp <= fn').iloc[-1].fn
         upper_margin = errors.query('fn <= fp').iloc[0].percentage
-        #save to file with cos max and min values, corpus etc.
-        return lower_margin, upper_margin
+        fp_up = errors.query('fp <= fn').iloc[0].fp
+        fn_up = errors.query('fp <= fn').iloc[0].fn
+        intersection = {'lower_margin':lower_margin, 'upper_margin':upper_margin, 'fp_low':fp_low, 'fp_up':fp_up,
+                        'fn_low': fn_low, 'fn_up': fn_up}
+        return intersection
 
-
-path = 'results/piperDE/delta/*.h5'
-prefix = 'results/piperDE/delta/'
+path = 'results/Chinese/delta/*.h5'
+prefix = 'results/Chinese/delta/'
 #corpus = 'piperDE'
 
 for file in glob.glob(path):
@@ -152,11 +169,21 @@ for file in glob.glob(path):
     a, cos = A.delta_prediction()
     print(a.to_string())
 
-    E = ErrorCalculation(a, cos)
-    #x, y = E.alpha_beta_intersection()
-    err = E.visualise_errors()
+    E = ErrorCalculation(a, cos, mfw)
+    intersection = E.alpha_beta_intersection()
+    intersection['corpus'] = corpus
+    intersection['mfw'] = mfw
+    intersection['min_cos'] = min(cos)
+    err = E.extract_errors()
     print(err)
+
+    blub = [corpus, mfw, x, y]
+    import csv
+    with open(r'cutoffs_entire_data.csv', 'a') as f:
+        cutoff = csv.writer(f)
+        cutoff.writerow(blub)
 
 
 # lege Delta-Kurven der verschiedenen Korpora übereinander, auch der Fehler evtl?
 # Streuung der Korpora
+# bei Visualisierungs-Notebook: cutoff-csv importieren, Prozentwerte vis (?), cnf Matrizen daraus ableiten

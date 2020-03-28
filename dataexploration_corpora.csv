@@ -1,0 +1,15 @@
+Korpus,Mittlere Textlänge,max_min,Textarten,Anzahl Autoren,Anzahl Texte,Zeitraum,balanciert
+refcor_DE,137980,19818,novels,25,75,1774-1926,ja
+refcor_FR,98607,33501,novels,25,75,1827-1934,ja
+refcor_EN,156933,40706,novels,25,75,1838-1921,ja
+refcor_DE,137980,761380,novels,25,75,1774-1926,ja
+refcor_FR,98607,209664,novels,25,75,1827-1934,ja
+refcor_EN,156933,456581,novels,25,75,1838-1921,ja
+refcor_C,96452,14381,novels,25,75,1904-2012 (???),ja
+refcor_C,96452,466305,novels,25,75,1904-2012 (???),ja
+piper_DE,96693,13541,novels,86,150,1771-1932,nein
+piper_FR,94446,26071,novels,95,150,1771-1929,nein
+piper_EN,126132,23672,novels,97,150,1771-1930,nein
+piper_DE,96693,457836,novels,86,150,1771-1932,nein
+piper_FR,94446,554464,novels,95,150,1771-1929,nein
+piper_EN,126132,361333,novels,97,150,1771-1930,nein

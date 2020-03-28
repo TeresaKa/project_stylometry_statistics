@@ -202,5 +202,89 @@ plt.show()
 # verschiedene MFW-Werte austesten
 # Streuung der Korpora
 # -
+# #### calculate mean length of chinese corpus
+
+# +
+import pandas as pd
+import regex as re
+
+def wordcounts_in_file(f_name):
+    """
+
+    :param f_name: filename of file to be analyzed
+    :return: Counter of tokenized file
+    """
+    with open(f_name, encoding='utf-8') as f:
+        # return Counter(remove_stopwords(f))
+        return Counter(tokenize(f))
+
+def tokenize(lines, token=re.compile(r'\p{L}+')):
+    """
+
+    :param lines (str): object to be tokenized, e.g. file
+    :param token: pattern to tokenize lines
+    :return: lowered and tokenized string
+    """
+    for line in lines:
+        yield from map(str.lower, token.findall(line))
+
+
+# +
+import glob
+from collections import Counter
+
+path = 'dataset_fuer_mich/refcor-master/Chinese/*.txt'
+length = []
+
+for file in glob.glob(path):
+    i=0
+    count = wordcounts_in_file(file)
+    for c in count:
+        i = i + count[c]
+    length.append(i)
+# -
+
+i / 150
+print(max(length), min(length))
+sum(length)/75
+
+explor = pd.read_csv('dataexploration_corpora.csv', encoding='utf-8')
+explor.drop('max_min', axis=1, inplace=True)
+explor.drop_duplicates(inplace=True)
+explor
+
+import matplotlib.pyplot as plt
+import pandas as pd
+from pandas.plotting import table 
+fig, ax = plt.subplots(figsize=(12, 3)) 
+# no axes
+ax.xaxis.set_visible(False)  
+ax.yaxis.set_visible(False)  
+# no frame
+ax.set_frame_on(False)  
+# plot table
+tab = table(ax, explor, loc='upper right')  
+# set font manually
+tab.auto_set_font_size(False)
+tab.set_fontsize(8) 
+# save the result
+plt.savefig('dataexploration_corpora.png')
+
+box = explor.copy()
+box.drop('Mittlere Textlänge', axis=1, inplace=True)
+box.drop('Textarten', axis=1, inplace=True)
+box.drop('Anzahl Autoren', axis=1, inplace=True)
+box.drop('Anzahl Texte', axis=1, inplace=True)
+box.drop('Zeitraum', axis=1, inplace=True)
+box.drop('balanciert', axis=1, inplace=True)
+box
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(8,6))
+sns.scatterplot(x='Korpus', y='Mittlere Textlänge', data=explor, color='.1', s=50)
+sns.boxplot(x='Korpus', y='max_min', data=box, palette='binary')
+plt.savefig("textlaenge_alle_korpora.png")
 
 
