@@ -17,13 +17,13 @@ class Delta:
 
     def calculate_distance(self):
         """ Calculates Manhattan, Cosine and Euclidean Delta measures and returns them as pd.Series """
-        series = []
+        series_list = []
         for index, row in self.df.iterrows():
             manhattan = distance.cityblock(row, self.df.loc[self.unknown])
             cosine = distance.cosine(row, self.df.loc[self.unknown])
             euclidean = distance.euclidean(row, self.df.loc[self.unknown])
-            series.append(pd.Series([manhattan, cosine, euclidean, '?'], ['manhattan', 'cosine', 'euclidean', 'label'], name=index))
-        return series
+            series_list.append(pd.Series([manhattan, cosine, euclidean, '?'], ['manhattan', 'cosine', 'euclidean', 'label'], name=index))
+        return series_list
 
     def create_distance_df(self):
         distance_measures = self.calculate_distance()
@@ -59,7 +59,7 @@ for file in glob.glob(path):
     attribution = pd.DataFrame()
     for u in zscores.index:
         attribution = pd.concat([attribution, Delta(zscores, u).assign_labels()])
-    #attribution.to_csv(str(mfw) + '_delta_' + str(corpus) + '.h5')
+    attribution.to_hdf(str(mfw) + '_delta_' + str(corpus) + '.h5',  key='data', mode='w')
 
 
 # d.to_csv(d.name + '.csv')

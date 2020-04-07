@@ -53,20 +53,20 @@ def create_pd_series(path, prefix):
     :param prefix: prefix to remove from filename for further use in Series
     :return: pd.Series with words and wordcounts
     """
-    series = []
+    freq_list = []
     for file in glob.glob(path):
         filename = file.replace(prefix, '')
         counts = wordcounts_in_file(file)
         words, freq = word2freq(counts)
-        series.append(pd.Series(freq, words, name=filename))
+        freq_list.append(pd.Series(freq, words, name=filename))
         print(filename)  # später löschen
-    return series
+    return freq_list
 
 
 def create_dataframe(series, mfw):
     """
 
-    :param series: pd.Series, created e.g. with create_pd_series()
+    :param series: list of pd.Series, created e.g. with create_pd_series()
     :param mfw: value of most frequent words
     :return: document-term-matrix as pd.Dataframe with zscores
     """
@@ -84,15 +84,14 @@ def create_dataframe(series, mfw):
     return df, zscores
 
 
-path = 'dataset_fuer_mich/piperFR/*.txt'
-prefix = 'dataset_fuer_mich/piperFR/'
+path = 'dataset/corpusDE/*.txt'
+prefix = 'dataset/corpusDE/'
 
 series = create_pd_series(path, prefix)
 
-
 #mfw_values = [10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
 mfw_values = [50]
-corpus = 'piperFR'
+corpus = 'corpusDE'
 for mfw in mfw_values:
     freq, zscores = create_dataframe(series, mfw)
     zscores.to_hdf(str(mfw) + '_zscore_' + str(corpus) + '.h5', key='data', mode='w')

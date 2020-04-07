@@ -240,11 +240,12 @@ for file in glob.glob(path):
     i=0
     count = wordcounts_in_file(file)
     for c in count:
-        i = i + count[c]
+        print(c)i = i + count[c]
     length.append(i)
+length
 # -
 
-i / 150
+#i / 150
 print(max(length), min(length))
 sum(length)/75
 

@@ -115,7 +115,7 @@ class ErrorCalculation:
         for i, column in enumerate(self.predictions):
             print(column)
             col_list = np.array(self.predictions[column])
-            cnf, error_dic = self.calculate_normalized_cnf_matrix(col_list, true_label) #ACHTUNG!alles irgendwie schöner machen, in eine Schleife
+            cnf, error_dic = self.calculate_normalized_cnf_matrix(col_list, true_label)
             error_dic['percentage'] = column
             error_list.append(error_dic)
             #self.visualize_cnf_matrix(cnf, cls, column) # uncomment if confusion matrices for every percentage step are wanted
@@ -128,36 +128,49 @@ class ErrorCalculation:
         return errors
 
     def extract_alpha_beta_errors(self):
-        errors = self.extract_errors(self.mfw).copy()
+        errors = self.extract_errors().copy()
         errors.drop('tn', inplace=True, axis=1)
         errors.drop('tp', inplace=True, axis=1)
         # errors2.drop('percentage', inplace=True, axis=1)
-
         return errors
 
-    def visualise_alpha_beta_errors(self):
-        data = self.extract_alpha_beta_errors(self.mfw).melt('percentage', var_name='errors', value_name='vals')
+    def visualise_alpha_beta_errors(self, errors):
+        data = errors.melt('percentage', var_name='errors', value_name='vals')
         g = sns.lineplot(x="percentage", y="vals", hue='errors', data=data)
-        plt.savefig('error_' + str(corpus) + '.png')
+        plt.savefig('error_' + str(mfw) + '_' + str(corpus) + '.png')
         plt.show()
         return g
 
-    def alpha_beta_intersection(self):
+    def alpha_beta_intersection(self, errors):
         """ Find intersection point of alpha (false positive) and beta (false negative) error. """
-        errors = self.extract_alpha_beta_errors(self.mfw)
-        lower_margin = errors.query('fp <= fn').iloc[-1].percentage
-        fp_low = errors.query('fp <= fn').iloc[-1].fp
-        fn_low = errors.query('fp <= fn').iloc[-1].fn
-        upper_margin = errors.query('fn <= fp').iloc[0].percentage
-        fp_up = errors.query('fp <= fn').iloc[0].fp
-        fn_up = errors.query('fp <= fn').iloc[0].fn
-        intersection = {'lower_margin':lower_margin, 'upper_margin':upper_margin, 'fp_low':fp_low, 'fp_up':fp_up,
-                        'fn_low': fn_low, 'fn_up': fn_up}
-        return intersection
+        low = errors.copy()
+        lower_margin = low.query('fp <= fn').iloc[0].percentage
+        low = low[low.percentage == lower_margin]
+        low.loc[:,'delta'] = min(cos) + (max(cos)-min(cos))*lower_margin
+
+        high = errors.copy()
+        upper_margin = high.query('fn <= fp').iloc[-1].percentage
+        high = high[high.percentage == upper_margin]
+        high.loc[:,'delta'] = min(cos) + (max(cos)-min(cos))*upper_margin
+
+        best_values = pd.DataFrame(columns=['fp', 'fn', 'percentage', 'delta'])
+        best_values = pd.concat([best_values, low])
+        best_values = pd.concat([best_values, high])
+        return best_values
+
+    def put_all_together(self):
+        errors = self.extract_alpha_beta_errors()
+        plot = self.visualise_alpha_beta_errors(errors)
+        intersection = self.alpha_beta_intersection(errors)
+        intersection['corpus'] = corpus
+        intersection['mfw'] = mfw
+        return plot, intersection  #muss plot rein?
+
 
 path = 'results/Chinese/delta/*.h5'
 prefix = 'results/Chinese/delta/'
-#corpus = 'piperDE'
+
+best_values = pd.DataFrame(columns=['fp', 'fn', 'percentage', 'delta', 'corpus', 'mfw'])
 
 for file in glob.glob(path):
     filename = file.replace(prefix, '').replace(file[-3:], '')
@@ -170,18 +183,12 @@ for file in glob.glob(path):
     print(a.to_string())
 
     E = ErrorCalculation(a, cos, mfw)
-    intersection = E.alpha_beta_intersection()
-    intersection['corpus'] = corpus
-    intersection['mfw'] = mfw
-    intersection['min_cos'] = min(cos)
-    err = E.extract_errors()
-    print(err)
+    plot, intersection = E.put_all_together()
+    best_values = pd.concat((best_values, intersection))
+    #err = E.extract_errors()
+    print(intersection)
 
-    blub = [corpus, mfw, x, y]
-    import csv
-    with open(r'cutoffs_entire_data.csv', 'a') as f:
-        cutoff = csv.writer(f)
-        cutoff.writerow(blub)
+best_values.to_csv(str(corpus) + '_best_cutoff_values')
 
 
 # lege Delta-Kurven der verschiedenen Korpora übereinander, auch der Fehler evtl?
