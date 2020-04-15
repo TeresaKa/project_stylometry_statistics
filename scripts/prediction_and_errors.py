@@ -14,12 +14,14 @@
 #     name: python3
 # ---
 
+import glob
 import pandas as pd
 import numpy as np
+
 import seaborn as sns
 import matplotlib.pyplot as plt
+
 from sklearn.metrics import confusion_matrix
-import glob
 
 
 class AuthorshipAttribution:
@@ -30,9 +32,9 @@ class AuthorshipAttribution:
         :param file: pd.Dataframe with Delta values
         """
         self.file = file
-# ### load calculated delta measures
 
     def load_deltas(self):
+        """load calculated delta measures"""
         data = pd.DataFrame(pd.read_hdf(self.file, index_col=0))
         return data
 
@@ -45,7 +47,6 @@ class AuthorshipAttribution:
 
     def delta_prediction(self):
         base = self.reshape_dataframe()
-        #was passiert hier:
         base = base[base.cosine != 1.00]
         cosine = base.cosine.values.reshape(-1, 1)
         minx = min(cosine)
@@ -77,7 +78,6 @@ class ErrorCalculation:
         self.max_cos = max(self.cos)
         self.mfw = mfw
         self.corpus = corpus
-# ### calculate and visualize alpha and beta errors
 
     def calculate_normalized_cnf_matrix(self, true_label, cols):
         """ Create Confusion Matrix and extract true negative, true positive, false negative, false positive values """
@@ -103,8 +103,6 @@ class ErrorCalculation:
         plt.close(fig)
         #plt.show()
 
-        #return ...  # ???
-
     def extract_errors(self):
         """ Create pd.Dataframe with true negative, true positive, false negative, false positive values
         for every percentage-step for decision boundary """
@@ -121,7 +119,6 @@ class ErrorCalculation:
             error_list.append(error_dic)
             #self.visualize_cnf_matrix(cnf, cls, column) # uncomment if confusion matrices for every percentage step are wanted
 
-
         errors = pd.DataFrame(error_list)
         errors.name = ('min: {}, max: {}'.format(self.min_cos, self.max_cos))
 
@@ -132,7 +129,6 @@ class ErrorCalculation:
         errors = self.extract_errors().copy()
         errors.drop('tn', inplace=True, axis=1)
         errors.drop('tp', inplace=True, axis=1)
-        # errors2.drop('percentage', inplace=True, axis=1)
         return errors
 
     def visualise_alpha_beta_errors(self, errors):
@@ -188,7 +184,6 @@ for file in glob.glob(path):
     E = ErrorCalculation(a, cos, mfw, corpus)
     intersection = E.put_all_together()
     best_values = pd.concat((best_values, intersection))
-    #err = E.extract_errors()
     print(intersection)
 
 best_values.to_csv(str(corpus) + '_best_cutoff_values.csv')
