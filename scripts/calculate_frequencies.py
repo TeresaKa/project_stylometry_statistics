@@ -1,8 +1,10 @@
-from collections import Counter
 import glob
 import regex as re
+from collections import Counter
+
 import pandas as pd
 from scipy.stats import zscore
+
 
 class Zscores:
     def __init__(self, path, prefix):
@@ -11,7 +13,6 @@ class Zscores:
 
     def tokenize(self, lines, pattern=re.compile(r'\p{L}+')):
         """
-
         :param lines: object to be tokenized, e.g. file
         :param pattern: pattern to tokenize 'lines'
         :return: lowered and tokenized string
@@ -21,17 +22,14 @@ class Zscores:
 
     def wordcounts_in_file(self, file):
         """
-
         :param file: filename of file to be analyzed
         :return: Counter of tokenized file
         """
         with open(file, encoding='utf-8') as f:
             return Counter(self.tokenize(f))
 
-
     def word2freq(self, counts):
         """
-
         :param counts: a Counter from a file to be analyzed
         :return: list of each words and their frequencies
         """
@@ -42,10 +40,8 @@ class Zscores:
             freq.append(counts[c])
         return words, freq
 
-
     def create_pd_series(self):
         """
-
         :param path: path to files
         :param prefix: prefix to remove from filename for further use in Series
         :return: list of pd.Series with words and wordcounts per file
@@ -56,13 +52,10 @@ class Zscores:
             counts = self.wordcounts_in_file(file)
             words, freq = self.word2freq(counts)
             freq_list.append(pd.Series(freq, words, name=filename))
-            print(filename)  # später löschen
         return freq_list
-
 
     def create_dataframe(self, freqlist, mfw):
         """
-
         :param freqlist: list of pd.Series, created e.g. with create_pd_series()
         :param mfw: value of most frequent words
         :return: document-term-matrix as pd.Dataframe with zscores
