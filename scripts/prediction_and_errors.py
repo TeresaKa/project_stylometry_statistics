@@ -33,8 +33,7 @@ class AuthorshipAttribution:
 # ### load calculated delta measures
 
     def load_deltas(self):
-        data = pd.DataFrame(pd.read_csv(self.file, index_col=0))
-        data = data[data.cosine != 0.00]
+        data = pd.DataFrame(pd.read_hdf(self.file, index_col=0))
         return data
 
     def reshape_dataframe(self):
@@ -47,17 +46,18 @@ class AuthorshipAttribution:
     def delta_prediction(self):
         base = self.reshape_dataframe()
         #was passiert hier:
-        cosine = base['cosine'].values.reshape(-1, 1)
+        base = base[base.cosine != 1.00]
+        cosine = base.cosine.values.reshape(-1, 1)
         minx = min(cosine)
         cos = np.unique(cosine)
 
         # determine same and different authors in 1%-steps of cosine values
-        cos_range = max(cos)-min(cos)
+        cos_range = max(cos)-minx
         perc = np.arange(0.01, 1.01, 0.01)
 
         for p in perc:
             for c in cos:
-                if c <= minx + cos_range*p:
+                if c >= minx + cos_range*p:
                     base.loc[base.cosine == float(c), np.around(p, decimals=2)] = 'same'
                 else:
                     base.loc[base.cosine == float(c), np.around(p, decimals=2)] = 'different'
@@ -65,7 +65,7 @@ class AuthorshipAttribution:
 
 
 class ErrorCalculation:
-    def __init__(self, predictions, cos, mfw):
+    def __init__(self, predictions, cos, mfw, corpus):
         """
         Calculates true positive, true negative, false positive and false negative values.
         :param predictions: Predicted authorship attributions as pd.Dataframe
@@ -76,6 +76,7 @@ class ErrorCalculation:
         self.min_cos = min(self.cos)
         self.max_cos = max(self.cos)
         self.mfw = mfw
+        self.corpus = corpus
 # ### calculate and visualize alpha and beta errors
 
     def calculate_normalized_cnf_matrix(self, true_label, cols):
@@ -98,11 +99,11 @@ class ErrorCalculation:
         ax.xaxis.set_ticklabels(cls)
         ax.yaxis.set_ticklabels(cls)
 
-        plt.savefig(str(self.mfw) + '_' + str(percentage) + '_' + str(corpus) + '.png')
+        plt.savefig(str(self.mfw) + '_' + str(self.corpus) + '_' + str(percentage) + '.png')
         plt.close(fig)
         #plt.show()
 
-        return ...  # ???
+        #return ...  # ???
 
     def extract_errors(self):
         """ Create pd.Dataframe with true negative, true positive, false negative, false positive values
@@ -124,7 +125,7 @@ class ErrorCalculation:
         errors = pd.DataFrame(error_list)
         errors.name = ('min: {}, max: {}'.format(self.min_cos, self.max_cos))
 
-        errors.to_csv('errors_' + str(self.mfw) + '_' + str(corpus))
+        errors.to_csv(str(self.mfw) + '_errors_' + str(self.corpus))
         return errors
 
     def extract_alpha_beta_errors(self):
@@ -137,21 +138,21 @@ class ErrorCalculation:
     def visualise_alpha_beta_errors(self, errors):
         data = errors.melt('percentage', var_name='errors', value_name='vals')
         g = sns.lineplot(x="percentage", y="vals", hue='errors', data=data)
-        plt.savefig('error_' + str(mfw) + '_' + str(corpus) + '.png')
+        plt.savefig(str(self.mfw) + '_error_' + str(self.corpus) + '.png')
         plt.show()
         return g
 
     def alpha_beta_intersection(self, errors):
         """ Find intersection point of alpha (false positive) and beta (false negative) error. """
         low = errors.copy()
-        lower_margin = low.query('fp <= fn').iloc[0].percentage
+        lower_margin = errors.copy().query('fp <= fn').iloc[-1].percentage
         low = low[low.percentage == lower_margin]
-        low.loc[:,'delta'] = min(cos) + (max(cos)-min(cos))*lower_margin
+        low.loc[:, 'delta'] = min(cos) + (max(cos)-min(cos))*lower_margin
 
         high = errors.copy()
-        upper_margin = high.query('fn <= fp').iloc[-1].percentage
+        upper_margin = errors.copy().query('fn <= fp').iloc[0].percentage
         high = high[high.percentage == upper_margin]
-        high.loc[:,'delta'] = min(cos) + (max(cos)-min(cos))*upper_margin
+        high.loc[:, 'delta'] = min(cos) + (max(cos)-min(cos))*upper_margin
 
         best_values = pd.DataFrame(columns=['fp', 'fn', 'percentage', 'delta'])
         best_values = pd.concat([best_values, low])
@@ -160,11 +161,11 @@ class ErrorCalculation:
 
     def put_all_together(self):
         errors = self.extract_alpha_beta_errors()
-        plot = self.visualise_alpha_beta_errors(errors)
+        self.visualise_alpha_beta_errors(errors)
         intersection = self.alpha_beta_intersection(errors)
-        intersection['corpus'] = corpus
-        intersection['mfw'] = mfw
-        return plot, intersection  #muss plot rein?
+        intersection['corpus'] = self.corpus
+        intersection['mfw'] = self.mfw
+        return intersection
 
 
 path = 'results/Chinese/delta/*.h5'
@@ -179,18 +180,15 @@ for file in glob.glob(path):
     print(filename, mfw, corpus)
 
     A = AuthorshipAttribution(file)
+    data = A.reshape_dataframe()
     a, cos = A.delta_prediction()
+    a.to_csv(str(mfw) + str(corpus) + '_attribution')
     print(a.to_string())
 
-    E = ErrorCalculation(a, cos, mfw)
-    plot, intersection = E.put_all_together()
+    E = ErrorCalculation(a, cos, mfw, corpus)
+    intersection = E.put_all_together()
     best_values = pd.concat((best_values, intersection))
     #err = E.extract_errors()
     print(intersection)
 
-best_values.to_csv(str(corpus) + '_best_cutoff_values')
-
-
-# lege Delta-Kurven der verschiedenen Korpora übereinander, auch der Fehler evtl?
-# Streuung der Korpora
-# bei Visualisierungs-Notebook: cutoff-csv importieren, Prozentwerte vis (?), cnf Matrizen daraus ableiten
+best_values.to_csv(str(corpus) + '_best_cutoff_values.csv')

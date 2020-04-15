@@ -3,8 +3,6 @@ import pandas as pd
 import glob
 from scipy.spatial import distance
 
-# zscores = pd.read_hdf('2000_zscore_corpusDE.h5')
-
 class Delta:
     def __init__(self, df, unknown):
         """
@@ -30,7 +28,7 @@ class Delta:
         distance = pd.DataFrame(distance_measures)
         distance.sort_values(by=['manhattan', 'cosine', 'euclidean'], inplace=True)  # ist das nötig?
         distance = distance.round(2)
-
+        distance.cosine = 1 - distance.cosine
         return distance
 
     def assign_labels(self):
@@ -48,18 +46,16 @@ class Delta:
         return delta
 
 # hier ein loop mit pfad, der für alle mfw Werte die zscore Dateien einliest (alle .h5 Endungen?)
-path = 'results/Chinese/zscores/*.h5'
-prefix = 'results/Chinese/zscores/'
-corpus = 'Chinese'
-for file in glob.glob(path):
-    filename = file.replace(prefix, '')
-    mfw = filename.split('_')[0]
+path = 'results/German/zscores/*.h5'
+prefix = 'results/German/zscores/'
 
+for file in glob.glob(path):
+    filename = file.replace(prefix, '').replace(file[-3:], '')
+    mfw = filename.split('_')[0]
+    corpus = filename.split('_')[2]
+    print(file)
     zscores = pd.read_hdf(file)
     attribution = pd.DataFrame()
     for u in zscores.index:
         attribution = pd.concat([attribution, Delta(zscores, u).assign_labels()])
     attribution.to_hdf(str(mfw) + '_delta_' + str(corpus) + '.h5',  key='data', mode='w')
-
-
-# d.to_csv(d.name + '.csv')
