@@ -1,19 +1,3 @@
-# -*- coding: utf-8 -*-
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py:light
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.4.1
-#   kernelspec:
-#     display_name: Python 3
-#     language: python
-#     name: python3
-# ---
-
 import glob
 import pandas as pd
 import numpy as np
@@ -46,6 +30,7 @@ class AuthorshipAttribution:
         return d
 
     def delta_prediction(self):
+        ''' Calculate cosine range and assign same and different authorship '''
         base = self.reshape_dataframe()
         base = base[base.cosine != 1.00]
         cosine = base.cosine.values.reshape(-1, 1)
@@ -89,7 +74,8 @@ class ErrorCalculation:
 
         return cnf, error_dic
 
-    def visualize_cnf_matrix(self, cnf, cls, percentage):
+    def visualize_cnf_matrix(self, cnf, percentage):
+        cls = ['same', 'different']
         fig, ax = plt.subplots(figsize=(5,5))
         sns.heatmap(cnf, annot=True, cmap=sns.color_palette("Blues"), ax = ax)
 
@@ -109,7 +95,6 @@ class ErrorCalculation:
         true_label = np.array(self.predictions.label)
         self.predictions.drop('cosine', inplace=True, axis=1)
         self.predictions.drop('label', inplace=True, axis=1)
-        cls = ['same', 'different']
         error_list = []
         for i, column in enumerate(self.predictions):
             print(column)
@@ -117,7 +102,7 @@ class ErrorCalculation:
             cnf, error_dic = self.calculate_normalized_cnf_matrix(col_list, true_label)
             error_dic['percentage'] = column
             error_list.append(error_dic)
-            #self.visualize_cnf_matrix(cnf, cls, column) # uncomment if confusion matrices for every percentage step are wanted
+            #self.visualize_cnf_matrix(cnf, column) # uncomment if confusion matrices for every percentage step are wanted
 
         errors = pd.DataFrame(error_list)
         errors.name = ('min: {}, max: {}'.format(self.min_cos, self.max_cos))
@@ -164,26 +149,29 @@ class ErrorCalculation:
         return intersection
 
 
-path = 'results/Chinese/delta/*.h5'
-prefix = 'results/Chinese/delta/'
+def predict_authorship(path, prefix):
+    best_values = pd.DataFrame(columns=['fp', 'fn', 'percentage', 'delta', 'corpus', 'mfw'])
 
-best_values = pd.DataFrame(columns=['fp', 'fn', 'percentage', 'delta', 'corpus', 'mfw'])
+    for file in glob.glob(path):
+        filename = file.replace(prefix, '').replace(file[-3:], '')
+        mfw = filename.split('_')[0]
+        corpus = filename.split('_')[2]
+        print('Filename:',filename, 'MFW-Level:', mfw, 'Corpus:', corpus)
 
-for file in glob.glob(path):
-    filename = file.replace(prefix, '').replace(file[-3:], '')
-    mfw = filename.split('_')[0]
-    corpus = filename.split('_')[2]
-    print(filename, mfw, corpus)
+        A = AuthorshipAttribution(file)
+        a, cos = A.delta_prediction()
+        a.to_csv(str(mfw) + str(corpus) + '_attribution')
 
-    A = AuthorshipAttribution(file)
-    data = A.reshape_dataframe()
-    a, cos = A.delta_prediction()
-    a.to_csv(str(mfw) + str(corpus) + '_attribution')
-    print(a.to_string())
+        E = ErrorCalculation(a, cos, mfw, corpus)
+        intersection = E.put_all_together()
+        best_values = pd.concat((best_values, intersection))
+        print('Intersection at ', intersection)
 
-    E = ErrorCalculation(a, cos, mfw, corpus)
-    intersection = E.put_all_together()
-    best_values = pd.concat((best_values, intersection))
-    print(intersection)
+    best_values.to_csv(str(corpus) + '_best_cutoff_values.csv')
 
-best_values.to_csv(str(corpus) + '_best_cutoff_values.csv')
+
+if __name__ == "__main__":
+    path = 'results/Chinese/delta/*.h5'
+    prefix = 'results/Chinese/delta/'
+
+    predict_authorship(path, prefix)

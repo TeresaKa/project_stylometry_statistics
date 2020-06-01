@@ -74,17 +74,22 @@ class Zscores:
         return df, zscores
 
 
-path = 'dataset/refcor-master/German/*.txt'
-prefix = 'dataset/refcor-master/German/'
+def frequencies(path, prefix):
+    Z = Zscores(path, prefix)
+    series = Z.create_pd_series()
 
-Z = Zscores(path, prefix)
-series = Z.create_pd_series()
+    mfw_values = [10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
 
-mfw_values = [10, 50, 100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+    corpus = path.split('/')[2]
 
-corpus = path.split('/')[2]
+    for mfw in mfw_values:
+        freq, zscores = Z.create_dataframe(series, mfw)
+        zscores.to_hdf(str(mfw) + '_zscore_' + str(corpus) + '.h5', key='data', mode='w')
+        freq.to_hdf(str(mfw) + '_rel_freq_' + str(corpus) + '.h5', key='data', mode='w')
 
-for mfw in mfw_values:
-    freq, zscores = Z.create_dataframe(series, mfw)
-    zscores.to_hdf(str(mfw) + '_zscore_' + str(corpus) + '.h5', key='data', mode='w')
-    freq.to_hdf(str(mfw) + '_rel_freq_' + str(corpus) + '.h5', key='data', mode='w')
+
+if __name__ == "__main__":
+    path = 'dataset/refcor-master/German/*.txt'
+    prefix = 'dataset/refcor-master/German/'
+
+    frequencies(path, prefix)

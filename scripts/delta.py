@@ -1,12 +1,11 @@
-# -*- coding: utf-8 -*-
-import pandas as pd
 import glob
+import pandas as pd
 from scipy.spatial import distance
+
 
 class Delta:
     def __init__(self, df, unknown):
         """
-
         :param df: document-term-matrix with zscores
         :param unknown: specify unknown document in 'df' to be compared with remaining texts
         """
@@ -45,17 +44,22 @@ class Delta:
                 delta.loc[i, 'label'] = 'different'
         return delta
 
-# hier ein loop mit pfad, der für alle mfw Werte die zscore Dateien einliest (alle .h5 Endungen?)
-path = 'results/German/zscores/*.h5'
-prefix = 'results/German/zscores/'
 
-for file in glob.glob(path):
-    filename = file.replace(prefix, '').replace(file[-3:], '')
-    mfw = filename.split('_')[0]
-    corpus = filename.split('_')[2]
-    print(file)
-    zscores = pd.read_hdf(file)
-    attribution = pd.DataFrame()
-    for u in zscores.index:
-        attribution = pd.concat([attribution, Delta(zscores, u).assign_labels()])
-    attribution.to_hdf(str(mfw) + '_delta_' + str(corpus) + '.h5',  key='data', mode='w')
+def delta_attribution(path, prefix):
+    for file in glob.glob(path):
+        filename = file.replace(prefix, '').replace(file[-3:], '')
+        mfw = filename.split('_')[0]
+        corpus = filename.split('_')[2]
+        print(file)
+        zscores = pd.read_hdf(file)
+        attribution = pd.DataFrame()
+        for u in zscores.index:
+            attribution = pd.concat([attribution, Delta(zscores, u).assign_labels()])
+        attribution.to_hdf(str(mfw) + '_delta_' + str(corpus) + '.h5',  key='data', mode='w')
+
+
+if __name__ == "__main__":
+    path = 'results/German/zscores/*.h5'
+    prefix = 'results/German/zscores/'
+
+    delta_attribution(path, prefix)

@@ -9,5 +9,5 @@ In authorship attribution, the calculation of delta values, e.g. Burrow's Delta,
     ├── dataset # Contains datasets in different languages
     ├── results # Contains the results for zscore, delta and error calculations as well as visualisations.
     ├── scripts # Contains scripts to calculate delta, transform the dataset and process the data
-    ├── utils # Contains Jupyter Notebooks and scripts to viszualize datasets and results and to support data processing.
+    ├── utils # Contains Jupyter Notebooks and scripts to visualize datasets and results and to support data processing.
     └── README.md
