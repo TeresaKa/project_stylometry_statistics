@@ -3,6 +3,7 @@ import pandas as pd
 
 
 def extract_best(path):
+    """ Extracts best cutoff value for every corpus"""
     corpora_best = []
     entire = pd.DataFrame()
     for file in glob.glob(path):
